@@ -1,5 +1,7 @@
 const User = require("../models/User");
 
+const ONLINE_THRESHOLD_MS = 600000;
+
 exports.updateStatus = async (req, res) => {
   const { userKey, lastOnline } = req.body;
 
@@ -35,7 +37,7 @@ exports.getStatusSummary = async (req, res) => {
 
     users.forEach(user => {
       const lastOnlineTime = new Date(user.lastOnline).getTime();
-      const isOnline = currentTime - lastOnlineTime <= 15000;
+      const isOnline = currentTime - lastOnlineTime <= ONLINE_THRESHOLD_MS;
 
       if (isOnline) online++;
       else offline++;
@@ -47,9 +49,6 @@ exports.getStatusSummary = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-const ONLINE_THRESHOLD_MS = 15000;
 
 exports.getAllUserStatuses = async (req, res) => {
   try {
